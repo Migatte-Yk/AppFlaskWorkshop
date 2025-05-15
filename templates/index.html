@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción de Diabetes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="card animate__animated animate__fadeIn">
+            <h1 class="title">Predicción de Progresión de Diabetes</h1>
+            <p class="subtitle">Ingrese su BMI (Índice de Masa Corporal) para estimar el resultado:</p>
+            
+            <form method="POST" class="form">
+                <div class="form-group">
+                    <input type="number" name="bmi" step="0.01" placeholder="Ejemplo: 25.5" value="{{ bmi_input }}" required 
+                           class="input-field animate__animated animate__fadeIn animate__delay-1s">
+                </div>
+                <button type="submit" class="btn animate__animated animate__fadeInUp animate__delay-1s">Predecir</button>
+                
+                {% if image %}
+                <button type="submit" name="reset" value="true" class="btn reset-btn animate__animated animate__fadeInUp animate__delay-1s">
+                    Reiniciar
+                </button>
+                {% endif %}
+            </form>
+
+            {% if prediction is not none %}
+                <div class="result animate__animated animate__fadeIn animate__delay-2s">
+                    <p><strong>Resultado de la predicción:</strong> <span class="prediction">{{ "%.2f"|format(prediction) }}</span></p>
+                    {% if explanation %}
+                    <div class="explanation">
+                        <p><strong>Interpretación:</strong> {{ explanation }}</p>
+                    </div>
+                    {% endif %}
+                    <div class="info-box animate__animated animate__fadeIn animate__delay-3s">
+                        <p>El valor predicho representa la progresión de la diabetes en una escala estandarizada. 
+                        Valores más altos indican mayor progresión de la enfermedad.</p>
+                        <p>BMI (Índice de Masa Corporal) es una medida que relaciona peso y altura.</p>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="links animate__animated animate__fadeIn animate__delay-2s">
+                {% if not image %}
+                <a href="/plot" class="link-btn">Ver Gráfico de Regresión</a>
+                {% else %}
+                <a href="/reset" class="link-btn">Ocultar Gráfico</a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if image %}
+        <div class="graph-container animate__animated animate__fadeIn animate__delay-3s">
+            <img src="{{ url_for('static', filename=image) }}" alt="Gráfico" class="graph-img">
+            <div class="graph-info">
+                <p>Este gráfico muestra la relación entre el BMI y la progresión de la diabetes.</p>
+                <p>Los puntos azules representan datos reales y la línea roja muestra la predicción del modelo.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
